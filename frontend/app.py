@@ -497,14 +497,6 @@ st.markdown(
         transform: translateY(-1px);
     }
 
-    .hero-banner {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 12px;
-        margin-bottom: 0.5rem;
-    }
-
     .block-container {
         padding-top: 2rem;
     }
@@ -513,24 +505,46 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown(
-    "<img class='hero-banner' src='https://images.unsplash.com/"
-    "photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=80' />",
-    unsafe_allow_html=True,
-)
+# --- Hero banner asimetrico: imagen izquierda (60%) / titulo derecha (40%) --
+_col_img, _col_titulo = st.columns([3, 2], gap="large")
 
-st.markdown(
-    "<h1 style='text-align: center; color: #1E3A8A; font-weight: 800; "
-    "margin-top: 0.5rem; margin-bottom: 0.25rem;'>"
-    "✈️ TMC Elite - Gestor Autónomo de Retrasos</h1>",
-    unsafe_allow_html=True,
-)
-st.markdown(
-    "<p style='text-align: center; font-size: 1.1rem; color: #6B7280; "
-    "margin-bottom: 1.5rem;'>Auditoría financiera, reubicación de vuelos y "
-    "ajuste de hoteles en tiempo real.</p>",
-    unsafe_allow_html=True,
-)
+with _col_img:
+    st.image("frontend/assets/077.jpg", width="stretch")
+
+with _col_titulo:
+    st.markdown(
+        """
+        <div style="
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            padding: 2rem 1rem;
+        ">
+            <h1 style="
+                color: #1E3A8A;
+                font-weight: 800;
+                font-size: 2.2rem;
+                line-height: 1.2;
+                margin-bottom: 1rem;
+            ">✈️ TMC Elite<br>Gestor Autónomo<br>de Retrasos</h1>
+            <p style="
+                font-size: 1.05rem;
+                color: #6B7280;
+                line-height: 1.6;
+                margin-bottom: 1.5rem;
+            ">Auditoría financiera, reubicación de vuelos y ajuste de hoteles
+            en tiempo real mediante Inteligencia Artificial.</p>
+            <p style="
+                font-size: 0.85rem;
+                color: #9CA3AF;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            ">Powered by LangGraph · Groq · Streamlit</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 render_mermaid(MERMAID_DIAGRAM)
 
