@@ -18,6 +18,7 @@ compartido, que la interfaz de Streamlit muestra paso a paso.
 from __future__ import annotations
 
 import os
+import re
 from typing import TypedDict
 
 import streamlit as st
@@ -431,22 +432,81 @@ def generar_pdf(texto_reporte: str) -> bytes:
     return bytes(pdf_bytes)
 
 
+# --- Extraccion de metricas desde el reporte final --------------------------
+
+
+def extraer_decision(texto: str) -> str:
+    """Extrae REPROGRAMAR o ESCALAR (lo que aparezca primero) del reporte,
+    para mostrarlo como metrica destacada en la UI."""
+    upper = texto.upper()
+    candidatos = [
+        (upper.find(palabra), palabra)
+        for palabra in ("REPROGRAMAR", "ESCALAR")
+        if upper.find(palabra) != -1
+    ]
+    if not candidatos:
+        return "N/D"
+    candidatos.sort(key=lambda item: item[0])
+    return candidatos[0][1]
+
+
+def extraer_impacto_financiero(texto: str) -> str:
+    """Extrae un valor monetario (o etiqueta equivalente) de la seccion
+    de Impacto Financiero, para mostrarlo como metrica destacada."""
+    match_seccion = re.search(r"Impacto Financiero[^\n]*\n(.*)", texto, re.S)
+    seccion = match_seccion.group(1) if match_seccion else texto
+
+    match_monto = re.search(r"\$\s?[\d][\d.,]*\s?(?:USD|EUR)?", seccion)
+    if match_monto:
+        return match_monto.group(0).strip()
+
+    if re.search(r"sin l[ií]mite|ilimitado", seccion, re.IGNORECASE):
+        return "Sin límite (VIP)"
+
+    return "Ver detalle"
+
+
 # --- Interfaz Streamlit -------------------------------------------------------
 
 
 st.markdown(
     """
     <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0A2342 0%, #1E3A8A 100%);
+    }
+    [data-testid="stSidebar"] * {
+        color: #F3F4F6;
+    }
+
     div.stButton > button, div.stDownloadButton > button {
-        background-color: #0A2342;
-        color: #D4AF37;
-        border: 1px solid #D4AF37;
+        background-color: #1E3A8A;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1.25rem;
         font-weight: 600;
+        transition: background-color 0.2s ease, transform 0.1s ease;
     }
     div.stButton > button:hover, div.stDownloadButton > button:hover {
-        background-color: #D4AF37;
-        color: #0A2342;
-        border: 1px solid #0A2342;
+        background-color: #2563EB;
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+
+    .hero-banner {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+    }
+
+    .block-container {
+        padding-top: 2rem;
     }
     </style>
     """,
@@ -454,27 +514,22 @@ st.markdown(
 )
 
 st.markdown(
-    "<h1 style='text-align: center; color: #1E3A8A; font-weight: 800;'>"
+    "<img class='hero-banner' src='https://images.unsplash.com/"
+    "photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=80' />",
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    "<h1 style='text-align: center; color: #1E3A8A; font-weight: 800; "
+    "margin-top: 0.5rem; margin-bottom: 0.25rem;'>"
     "✈️ TMC Elite - Gestor Autónomo de Retrasos</h1>",
     unsafe_allow_html=True,
 )
 st.markdown(
-    "<p style='text-align: center; font-size: 1.2rem; color: #6B7280; "
-    "margin-bottom: 2rem;'>Auditoría financiera, reubicación de vuelos y "
+    "<p style='text-align: center; font-size: 1.1rem; color: #6B7280; "
+    "margin-bottom: 1.5rem;'>Auditoría financiera, reubicación de vuelos y "
     "ajuste de hoteles en tiempo real.</p>",
     unsafe_allow_html=True,
-)
-
-st.image(
-    "https://images.unsplash.com/photo-1436491865332-7a61a109cc05"
-    "?auto=format&fit=crop&w=1200&q=80",
-    width="stretch",
-)
-
-st.title("TMC Elite Orquestador")
-st.caption(
-    "Business Travel Elite: orquestacion centralizada con LangGraph + Groq. "
-    "Flujo: Transporte -> Alojamiento -> Finanzas -> Agenda."
 )
 
 render_mermaid(MERMAID_DIAGRAM)
@@ -561,6 +616,24 @@ if simular:
 
             st.subheader("📑 Reporte Ejecutivo de Resolución")
             decision = estado_final["decision_final"]
+
+            decision_extraida = extraer_decision(decision)
+            impacto_extraido = extraer_impacto_financiero(decision)
+
+            col_metric_1, col_metric_2 = st.columns(2)
+            with col_metric_1:
+                st.metric(
+                    label="Decisión del Orquestador",
+                    value=decision_extraida,
+                    delta="Automático" if decision_extraida == "REPROGRAMAR" else "Requiere revisión",
+                    delta_color="normal" if decision_extraida == "REPROGRAMAR" else "inverse",
+                )
+            with col_metric_2:
+                st.metric(
+                    label="Impacto Financiero Estimado",
+                    value=impacto_extraido,
+                )
+
             st.markdown(decision)
 
             st.download_button(
