@@ -481,6 +481,20 @@ st.markdown(
     [data-testid="stSidebar"] * {
         color: #F3F4F6;
     }
+    /* Inputs de selectbox y slider dentro del sidebar: texto negro nítido
+       para máxima legibilidad sobre el fondo blanco de los controles. */
+    [data-testid="stSidebar"] [data-baseweb="select"] *,
+    [data-testid="stSidebar"] [data-baseweb="select"] svg,
+    [data-testid="stSidebar"] [data-baseweb="select"] path,
+    [data-testid="stSidebar"] input {
+        color: #111111 !important;
+        fill: #111111 !important;
+    }
+    /* Opciones del dropdown (menú desplegable abierto) */
+    [data-baseweb="popover"] *,
+    [data-baseweb="menu"] * {
+        color: #111111 !important;
+    }
 
     div.stButton > button, div.stDownloadButton > button {
         background-color: #1E3A8A;
@@ -541,6 +555,13 @@ with _col_titulo:
                 letter-spacing: 0.08em;
                 text-transform: uppercase;
             ">Powered by LangGraph · Groq · Streamlit</p>
+            <p style="
+                font-size: 0.85rem;
+                color: #9CA3AF;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                margin-top: 0.25rem;
+            ">Soporta múltiples opciones dinámicas (hasta 5+ perfiles y tarifas diversas)</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -564,17 +585,35 @@ minutos_retraso = st.sidebar.slider(
 
 estado_hotel_original = st.sidebar.selectbox(
     "Estado original del Hotel",
-    options=["Confirmado", "Cancelado por no-show", "Desconocido"],
+    options=[
+        "Confirmado",
+        "Cancelado por no-show",
+        "Reservación Confirmada (Suite Premium, Caso Complejo)",
+        "En Lista de Espera",
+        "Modificación Pendiente de Confirmación",
+    ],
 )
 
 tipo_tarifa_vuelo = st.sidebar.selectbox(
     "Tipo de Tarifa de Vuelo",
-    options=["Flexible", "Económica Restrictiva"],
+    options=[
+        "Flexible",
+        "Económica Restrictiva",
+        "Económica Flexible - Tarifa V (Reembolsable)",
+        "Business Full Flex",
+        "Tarifa Corporativa Negociada",
+    ],
 )
 
 nivel_pasajero = st.sidebar.selectbox(
     "Nivel del Pasajero",
-    options=["C-Level / VIP", "Ejecutivo Estándar"],
+    options=[
+        "C-Level / VIP",
+        "Ejecutivo Estándar",
+        "Socio VIP Gold Plus (Tier 2)",
+        "Frecuente Platinum",
+        "Invitado Corporativo",
+    ],
 )
 
 motivo_viaje = st.sidebar.selectbox(
@@ -582,6 +621,8 @@ motivo_viaje = st.sidebar.selectbox(
     options=[
         "Reunión de Directorio Crítica",
         "Asistencia a Conferencia",
+        "Reunión Crítica de Directorio con Inversores",
+        "Visita Comercial Estratégica",
         "Trabajo Interno",
     ],
 )
