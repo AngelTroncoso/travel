@@ -453,6 +453,18 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    "<h1 style='text-align: center; color: #1E3A8A; font-weight: 800;'>"
+    "✈️ TMC Elite - Orquestador Multiagente</h1>",
+    unsafe_allow_html=True,
+)
+st.markdown(
+    "<p style='text-align: center; font-size: 1.2rem; color: #6B7280; "
+    "margin-bottom: 2rem;'>Resolución autónoma de disrupciones en viajes "
+    "corporativos mediante Inteligencia Artificial.</p>",
+    unsafe_allow_html=True,
+)
+
 st.image(
     "https://images.unsplash.com/photo-1436491865332-7a61a109cc05"
     "?auto=format&fit=crop&w=1200&q=80",
