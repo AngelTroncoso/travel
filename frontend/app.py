@@ -455,13 +455,13 @@ st.markdown(
 
 st.markdown(
     "<h1 style='text-align: center; color: #1E3A8A; font-weight: 800;'>"
-    "✈️ TMC Elite - Orquestador Multiagente</h1>",
+    "✈️ TMC Elite - Gestor Autónomo de Retrasos</h1>",
     unsafe_allow_html=True,
 )
 st.markdown(
     "<p style='text-align: center; font-size: 1.2rem; color: #6B7280; "
-    "margin-bottom: 2rem;'>Resolución autónoma de disrupciones en viajes "
-    "corporativos mediante Inteligencia Artificial.</p>",
+    "margin-bottom: 2rem;'>Auditoría financiera, reubicación de vuelos y "
+    "ajuste de hoteles en tiempo real.</p>",
     unsafe_allow_html=True,
 )
 
